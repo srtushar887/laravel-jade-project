@@ -167,6 +167,8 @@ class AdminUserController extends Controller
         $tanant_details->phone_number = $request->phone_number;
         $tanant_details->email = $request->email;
         $tanant_details->account_type = $request->account_type;
+        $tanant_details->password = Hash::make($request->password);
+        $tanant_details->show_pass = $request->password;
         $tanant_details->save();
 
         return back()->with('success','Tanant Details Updated');

@@ -16,13 +16,13 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">New Password</label>
-                                        <input type="text" id="firstName" name="password" class="form-control" placeholder="Enter Site Title">
+                                        <input type="password" id="firstName" name="password" class="form-control" placeholder="Enter New Password">
                                         <small class="form-control-feedback">  </small> </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Confirm Password</label>
-                                        <input type="text" id="firstName" name="c_password"  class="form-control" placeholder="Enter Site Sub Title">
+                                        <input type="password" id="firstName" name="c_password"  class="form-control" placeholder="Enter Confirm Password">
                                         <small class="form-control-feedback">  </small> </div>
                                 </div>
 

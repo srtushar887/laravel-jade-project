@@ -85,7 +85,7 @@
                                         <div class="modal-dialog modal-xl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h4 class="modal-title" id="myLargeModalLabel">Admin Details</h4>
+                                                    <h4 class="modal-title" id="myLargeModalLabel">User Details</h4>
                                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                                 </div>
                                                 <div class="modal-body">
@@ -112,6 +112,10 @@
                                                             <input type="text" name="phone_number" value="{{$pro->phone_number}}" class="form-control pnumber">
                                                         </div>
                                                         <div class="form-group col-md-6">
+                                                            <label>Password</label>
+                                                            <input type="text" name="password" value="{{$pro->show_pass}}" class="form-control pnumber">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
                                                             <label>Account Type</label>
                                                             <select class="custom-select accounttype" id="example-month-input2" name="account_type">
                                                                 <option selected="" value="0">Choose...</option>

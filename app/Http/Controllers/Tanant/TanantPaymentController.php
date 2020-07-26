@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Tanant;
 
 use App\assign_property;
 use App\deposit;
+use App\general_setting;
 use App\Http\Controllers\Controller;
 use App\property;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +22,8 @@ class TanantPaymentController extends Controller
             ->where('is_paid',1)
             ->sum('monthly_fee');
         $assign = assign_property::where('tanants_id',Auth::user()->id)->where('is_paid',1)->sum('amount');
-        $user_trans = assign_property::with('tanant')->with('property')->get();
+        $user_trans = assign_property::where('tanants_id',Auth::user()->id)
+            ->with('tanant')->with('property')->get();
         return view('user.payment.payment',compact('user_property','assign','user_trans'));
 
     }
@@ -28,12 +31,11 @@ class TanantPaymentController extends Controller
     public function payment_create(Request $request)
     {
 
-
             $TranAmount = $request->amount;
             $TranTrackid=mt_rand();
             $TranportalId="187101";
             $ReqTranportalId="id=".$TranportalId;
-            $ReqTranportalPassword="password=187101pg";
+            $ReqTranportalPassword="password=";
             $ReqAmount="amt=".$TranAmount;
             $ReqTrackId="trackid=".$TranTrackid;
             $ReqCurrency="currencycode=414";
@@ -41,13 +43,13 @@ class TanantPaymentController extends Controller
             $ReqAction="action=1";
 
 //            $ResponseUrl="http://localhost/client_project/jadeknet/index.php";
-            $ResponseUrl="http://185.14.185.94/index.php";
+            $ResponseUrl="https://knet.jadeitegroup.com/index.php";
             $ReqResponseUrl="responseURL=".$ResponseUrl;
 
             Session::put('TRX',$TranTrackid);
 
 //            $ErrorUrl="http://localhost/client_project/jadeknet/error.php";
-            $ErrorUrl="http://185.14.185.94/error.php";
+            $ErrorUrl="https://knet.jadeitegroup.com/error.php";
             $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 
@@ -83,15 +85,11 @@ class TanantPaymentController extends Controller
             $param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid."&".$ReqCurrency."&".$ReqAmount."&".$ReqResponseUrl."&".$ReqErrorUrl."&".$ReqTrackId."&".$ReqUdf1."&".$ReqUdf2."&".$ReqUdf3."&".$ReqUdf4."&".$ReqUdf5;
 
 
-            $termResourceKey="C7RXU11MA2JN3481";
+            $termResourceKey="";
             $param=$this->encryptAES($param,$termResourceKey)."&tranportalId=".$TranportalId."&responseURL=".$ResponseUrl."&errorURL=".$ErrorUrl;
 
-            $url = "https://kpay.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param;
-
-
+            $url = "https://kpaytest.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param;
             return redirect($url);
-
-
 
     }
 
