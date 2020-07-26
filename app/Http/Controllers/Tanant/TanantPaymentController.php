@@ -24,7 +24,8 @@ class TanantPaymentController extends Controller
         $assign = assign_property::where('tanants_id',Auth::user()->id)->where('is_paid',1)->sum('amount');
         $user_trans = assign_property::where('tanants_id',Auth::user()->id)
             ->with('tanant')->with('property')->get();
-        return view('user.payment.payment',compact('user_property','assign','user_trans'));
+        $transantion_history = deposit::where('tanant_id',Auth::user()->id)->get();
+        return view('user.payment.payment',compact('user_property','assign','user_trans','transantion_history'));
 
     }
 
@@ -35,7 +36,7 @@ class TanantPaymentController extends Controller
             $TranTrackid=mt_rand();
             $TranportalId="187101";
             $ReqTranportalId="id=".$TranportalId;
-            $ReqTranportalPassword="password=";
+            $ReqTranportalPassword="password=187101pg";
             $ReqAmount="amt=".$TranAmount;
             $ReqTrackId="trackid=".$TranTrackid;
             $ReqCurrency="currencycode=414";
@@ -85,7 +86,7 @@ class TanantPaymentController extends Controller
             $param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid."&".$ReqCurrency."&".$ReqAmount."&".$ReqResponseUrl."&".$ReqErrorUrl."&".$ReqTrackId."&".$ReqUdf1."&".$ReqUdf2."&".$ReqUdf3."&".$ReqUdf4."&".$ReqUdf5;
 
 
-            $termResourceKey="";
+            $termResourceKey="C7RXU11MA2JN3481";
             $param=$this->encryptAES($param,$termResourceKey)."&tranportalId=".$TranportalId."&responseURL=".$ResponseUrl."&errorURL=".$ErrorUrl;
 
             $url = "https://kpaytest.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param;

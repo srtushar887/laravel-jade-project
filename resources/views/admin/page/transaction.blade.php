@@ -44,30 +44,88 @@
                             <tr>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Property</th>
+                                <th>Property Name</th>
+                                <th>Result</th>
                                 <th>Amount</th>
-                                <th>Payment</th>
+                                <th>Track ID</th>
+                                <th>Payment ID</th>
+                                <th>Transaction ID</th>
+                                <th>Created date</th>
+                                <th>Status</th>
                             </tr>
                             </thead>
                             <tfoot>
                             <tr>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Property</th>
+                                <th>Property Name</th>
+                                <th>Result</th>
                                 <th>Amount</th>
-                                <th>Payment</th>
+                                <th>Track ID</th>
+                                <th>Payment ID</th>
+                                <th>Transaction ID</th>
+                                <th>Created date</th>
+                                <th>Status</th>
                             </tr>
                             </tfoot>
                             <tbody>
                             @foreach($trans as $pro)
+                                <?php
+                                $deposit_data = \App\deposit::where('id',$pro->depo_id)->first();
+                                $property = \App\property::where('id',$pro->property_id)->first();
+                                $tanant = \App\User::where('id',$pro->tanants_id)->first();
+                                ?>
                                 <tr>
-                                    <td>{{$pro->tanant->first_name}}</td>
-                                    <td>{{$pro->tanant->last_name}}</td>
-                                    <td>{{$pro->tanant->property_name}}</td>
-                                    <td>{{$pro->amount}}</td>
+                                    <td>
+                                        @if ($tanant)
+                                            {{$tanant->first_name}}
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        @if ($tanant)
+                                            {{$tanant->last_name}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($property)
+                                            {{$property->property_name}}
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        @if ($deposit_data)
+                                            {{$deposit_data->result}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($deposit_data)
+                                            {{$deposit_data->amt}} KWD
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        @if ($deposit_data)
+                                            {{$deposit_data->trackid}}
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        @if ($deposit_data)
+                                            {{$deposit_data->paymentid}}
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        @if ($deposit_data)
+                                            {{$deposit_data->tranid}}
+                                        @endif
+
+                                    </td>
+                                    <td>{{$pro->created_at}}</td>
                                     <td>
                                         @if($pro->is_paid == 1)
-                                            Unpaid
+                                            UnPaid
                                         @else
                                             Paid
                                         @endif

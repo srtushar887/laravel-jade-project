@@ -71,31 +71,61 @@
                                cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
+                                <th>Result</th>
                                 <th>Amount</th>
+                                <th>Track ID</th>
+                                <th>Payment ID</th>
+                                <th>Transaction ID</th>
                                 <th>Created date</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
                             <tfoot>
                             <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
+                                <th>Result</th>
                                 <th>Amount</th>
+                                <th>Track ID</th>
+                                <th>Payment ID</th>
+                                <th>Transaction ID</th>
                                 <th>Created date</th>
                                 <th>Status</th>
                             </tr>
                             </tfoot>
                             <tbody>
-                            @foreach($user_trans as $trns)
+                            @foreach($transantion_history as $trns)
                                 <tr>
-                                    <td>{{$trns->tanant->first_name}}</td>
-                                    <td>{{$trns->tanant->last_name}}</td>
-                                    <td>{{$trns->amount}}</td>
+                                    <td>
+
+                                            {{$trns->result}}
+
+                                    </td>
+                                    <td>
+
+                                            {{$trns->amt}} KWD
+
+
+                                    </td>
+                                    <td>
+
+                                            {{$trns->trackid}}
+
+
+                                    </td>
+                                    <td>
+
+                                            {{$trns->paymentid}}
+
+
+                                    </td>
+                                    <td>
+
+                                            {{$trns->tranid}}
+
+
+                                    </td>
                                     <td>{{$trns->created_at}}</td>
                                     <td>
-                                        @if($trns->is_paid == 1)
+                                        @if($trns->status == 1)
                                             UnPaid
                                         @else
                                             Paid

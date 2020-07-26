@@ -63,6 +63,7 @@ class TanantPaymentTwoController extends Controller
 
     public function payment_success()
     {
+
         $payid = Session::get('paymentid');
         $trx = Session::get('TRX');
         $tradId  = Session::get('tranid');
@@ -134,51 +135,50 @@ Thanks,
     {
 
 
-        return "result : ".$result."<br>"." Track id :  ".$trackid."<br>"." Payment id:  ".$PaymentID."<br>"." Transaction ID L "."<br>".$tranid."<br>"." Amount : ".$amount."<br>"." auth:  "."<br>".$auth."<br>"." var : ".$var."<br>"." ref :  ".$ref."<br>"." Post Date ".$postdate;
 
 
-        $trx = Session::get('TRX');
+        if ($result == "CAPTURED"){
+            $deposit_status = deposit::where('trackid',$trackid)->first();
+            $deposit_status->paymentid = $PaymentID;
+            $deposit_status->result = $result;
+            $deposit_status->tranid = $tranid;
+            $deposit_status->auth = $auth;
+            $deposit_status->avr = $var;
+            $deposit_status->ref = $ref;
+            $deposit_status->postdate = $postdate;
+            $deposit_status->status = 2;
+            $deposit_status->save();
 
-        $deposit_status = deposit::where('trackid',$trx)->first();
-        $deposit_status->paymentid = $payid;
-        $deposit_status->result = $result;
-        $deposit_status->tranid = $tranid;
-        $deposit_status->auth = $auth;
-        $deposit_status->avr = $var;
-        $deposit_status->ref = $ref;
-        $deposit_status->postdate = $postdate;
-        $deposit_status->status = 2;
-        $deposit_status->save();
+            $assign = assign_property::where('tanants_id',$deposit_status->tanant_id)->where('is_paid',1)->first();
+            $money = $assign->amount - $deposit_status->amt;
 
-        $assign = assign_property::where('tanants_id',$deposit_status->tanant_id)->where('is_paid',1)->first();
-        $money = $assign->amount - $deposit_status->amt;
-
-        $assnpro = assign_property::where('tanants_id',$deposit_status->tanant_id)->where('is_paid',1)->first();
-        $assnpro->due = $money;
-        $assnpro->is_paid = 2;
-        $assnpro->save();
+            $assnpro = assign_property::where('tanants_id',$deposit_status->tanant_id)->where('is_paid',1)->first();
+            $assnpro->due = $money;
+            $assnpro->is_paid = 2;
+            $assnpro->depo_id = $deposit_status->id;
+            $assnpro->save();
 
 //         assign_property::where('tanants_id',$deposit_status->tanant_id)
 //                   ->update(['is_paid' => 2]);
 
-        property::where('tanant_id',$deposit_status->tanant_id)
-            ->update(['is_paid' => 2]);
+            property::where('tanant_id',$deposit_status->tanant_id)
+                ->update(['is_paid' => 2]);
 
 
 
-        $gen = general_setting::first();
-        $user = User::where('id',$assign->tanants_id)->first();
-        $form =$gen->site_email;
-        $to = $user->email;
-        $subject = "Payment";
-        $message = "
+            $gen = general_setting::first();
+            $user = User::where('id',$assign->tanants_id)->first();
+            $form =$gen->site_email;
+            $to = $user->email;
+            $subject = "Payment";
+            $message = "
 Dear {$user->first_name}!
 
 You Payment have been process successfully.
-Track ID : {$trx}.
-Payment ID : {$payid}.
+Track ID : {$trackid}.
+Payment ID : {$PaymentID}.
 Transaction ID : {$tranid}.
-Amount : {$assign->amount} KWD .
+Amount : {$deposit_status->amt} KWD .
 Date : {$assign->updated_at}.
 Result : {$result}.
 
@@ -187,63 +187,77 @@ Result : {$result}.
 Thanks,
 {$gen->site_title}.
 ";
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= 'From: Do not reply <info@jadeitegorup.com>' . "\r\n";
-        $headers .= "X-Sender: testsite < $form >\n";
-        $headers .= 'X-Mailer: PHP/' . phpversion();
-        $headers .= "X-Priority: 1\n"; // Urgent message!
+            $headers = "MIME-Version: 1.0" . "\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            $headers .= 'From: Do not reply <info@jadeitegorup.com>' . "\r\n";
+            $headers .= "X-Sender: testsite < $form >\n";
+            $headers .= 'X-Mailer: PHP/' . phpversion();
+            $headers .= "X-Priority: 1\n"; // Urgent message!
 
-        mail($to, $subject, $message,$headers);
+            mail($to, $subject, $message,$headers);
 
-        return redirect(route('user.make.payment'))->with('success','Payment Success');
-
-    }
-
-
-    public function payment_success_error($track_id, $payment_id){
-        $payid = $payment_id;
-        $trx = Session::get('TRX');
-
-        $deposit_status = deposit::where('trackid',$trx)->first();
-        $deposit_status->paymentid = $payid;
-        $deposit_status->result = "Success";
-        $deposit_status->status = 1;
-        $deposit_status->save();
-
-        $assign = assign_property::where('tanants_id',$deposit_status->tanant_id)->where('is_paid',1)->first();
+            return redirect(route('user.make.payment'))->with('success','Payment Success');
+        }
+        else{
 
 
-        $gen = general_setting::first();
-        $user = User::where('id',$assign->tanants_id)->first();
-        $form =$gen->site_email;
-        $to = $user->email;
-        $subject = "Payment";
-        $message = "
+            $deposit_status = deposit::where('trackid',$trackid)->first();
+            $deposit_status->paymentid = $PaymentID;
+            $deposit_status->result = $result;
+            $deposit_status->tranid = $tranid;
+            $deposit_status->auth = $auth;
+            $deposit_status->avr = $var;
+            $deposit_status->ref = $ref;
+            $deposit_status->postdate = $postdate;
+            $deposit_status->status = 1;
+            $deposit_status->save();
+
+            $assign = assign_property::where('tanants_id',$deposit_status->tanant_id)->where('is_paid',1)->first();
+            $assign->depo_id = $deposit_status->id;
+
+
+            $gen = general_setting::first();
+            $user = User::where('id',$assign->tanants_id)->first();
+            $form =$gen->site_email;
+            $to = $user->email;
+            $subject = "Payment";
+            $message = "
 Dear {$user->first_name}!
 
 You Payment have been process Failed.
-Track ID : {$trx}.
-Payment ID : {$payid}.
-Amount : {$assign->amount} KWD .
+Track ID : {$trackid}.
+Payment ID : {$PaymentID}.
+Transaction ID : {$tranid}.
+Amount : {$deposit_status->amt} KWD .
 Date : {$assign->updated_at}.
-Result : Payment Failed.
+Result : {$result}.
 
 
 
 Thanks,
 {$gen->site_title}.
 ";
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= 'From: Do not reply <info@jadeitegorup.com>' . "\r\n";
-        $headers .= "X-Sender: testsite < $form >\n";
-        $headers .= 'X-Mailer: PHP/' . phpversion();
-        $headers .= "X-Priority: 1\n"; // Urgent message!
+            $headers = "MIME-Version: 1.0" . "\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            $headers .= 'From: Do not reply <info@jadeitegorup.com>' . "\r\n";
+            $headers .= "X-Sender: testsite < $form >\n";
+            $headers .= 'X-Mailer: PHP/' . phpversion();
+            $headers .= "X-Priority: 1\n"; // Urgent message!
 
-        mail($to, $subject, $message,$headers);
+            mail($to, $subject, $message,$headers);
 
-        return redirect(route('user.make.payment'))->with('success','Payment Failed');
+            return redirect(route('user.make.payment'))->with('alert','Payment Failed');
+        }
+
+
+
+    }
+
+
+    public function payment_success_error($result,$trackid,$PaymentID,$tranid,$amount,$auth,$var,$ref,$postdate){
+
+
+
 
     }
 

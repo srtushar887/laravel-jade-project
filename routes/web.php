@@ -195,8 +195,8 @@ Route::group(['middleware' => ['auth','userverify']],function (){
         Route::get('/paymentttt-success', 'Tanant\TanantPaymentTwoController@payment_success');
         Route::get('/payment-error', 'Tanant\TanantPaymentTwoController@payment_error');
 
-        Route::get('/payment-success/{result}/{trackid}/{PaymentID}/{tranid}/{amount}/{auth}/{var}/{ref}/{postdate}', 'Tanant\TanantPaymentTwoController@payment_success_confirm');
-        Route::get('/payment-fail/{tranid}', 'Tanant\TanantPaymentTwoController@payment_success_error');
+        Route::get('/payment-result/{result}/{trackid}/{PaymentID}/{tranid}/{amount}/{auth}/{var}/{ref}/{postdate}', 'Tanant\TanantPaymentTwoController@payment_success_confirm');
+        Route::get('/payment-fail/{result}/{trackid}/{PaymentID}/{tranid}/{amount}/{auth}/{var}/{ref}/{postdate}', 'Tanant\TanantPaymentTwoController@payment_success_error');
 
         //transaction
         Route::get('/transaction-history', 'Tanant\TanantPaymentTwoController@transaction_history')->name('user.transaction');
